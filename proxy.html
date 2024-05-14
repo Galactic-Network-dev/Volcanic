@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proxy - Volcanic</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f1f1f1;
+    }
+
+    .top-bar {
+      background-color: #ffffff;
+      height: 56px;
+      border-bottom: 1px solid #e1e1e1;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0 16px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .plus-button {
+      cursor: pointer;
+      margin-right: 16px;
+      font-size: 24px;
+    }
+
+    .new-tab {
+      background-color: #FF7F50; /* Red background for new tab */
+      height: 100vh;
+    }
+
+    .search-bar {
+      width: 80%;
+      max-width: 500px;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      margin: 20px auto;
+      display: block;
+    }
+
+    .search-results {
+      height: calc(100% - 60px); /* Adjust to accommodate search bar and top bar */
+      overflow: auto;
+      border: none;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <div class="plus-button" onclick="openNewTab()">
+      +
+    </div>
+  </div>
+  <div class="new-tab">
+    <input type="text" id="searchInput" class="search-bar" placeholder="Search..." onkeydown="searchKeyPress(event)">
+    <iframe src="" id="searchResults" class="search-results"></iframe>
+  </div>
+
+  <script>
+    function openNewTab() {
+      window.open('proxy.html', '_blank');
+    }
+
+    function searchKeyPress(event) {
+      if (event.keyCode === 13) { // Enter key pressed
+        let searchQuery = document.getElementById('searchInput').value;
+        let encodedQuery = encodeURIComponent(searchQuery);
+        document.getElementById('searchResults').src = 'https://www.bing.com/search?q=' + encodedQuery;
+      }
+    }
+  </script>
+</body>
+</html>
