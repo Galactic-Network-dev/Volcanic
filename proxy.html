@@ -79,7 +79,7 @@
   <div class="tabs" id="tabs"></div>
   <div class="new-tab" id="newTabContent">
     <input type="text" id="searchInput" class="search-bar" placeholder="Search..." onkeydown="searchKeyPress(event)">
-    <iframe src="" id="searchResults" class="search-results"></iframe>
+    <iframe src="" id="searchResults" class="search-results" onload="attachLinkInterception(this)"></iframe>
   </div>
 
   <script>
@@ -149,6 +149,16 @@
         tabData[document.querySelector('.tab.active').id].searchQuery = searchQuery;
         tabData[document.querySelector('.tab.active').id].iframeSrc = activeIframe.src;
       }
+    }
+
+    function attachLinkInterception(iframe) {
+      iframe.contentWindow.document.addEventListener('click', function(event) {
+        if (event.target.tagName === 'A') {
+          event.preventDefault();
+          const url = event.target.href;
+          window.location.href = `proxypage.html?url=${encodeURIComponent(url)}`;
+        }
+      });
     }
 
     // Open the first tab on load
