@@ -85,6 +85,7 @@
   <script>
     let tabCount = 0;
     const tabsContainer = document.getElementById('tabs');
+    const tabData = {};
 
     function openNewTab() {
       tabCount++;
@@ -105,10 +106,26 @@
       iframe.style.display = 'none';
       document.body.appendChild(iframe);
 
+      // Initialize tab data
+      tabData[tabId] = {
+        searchQuery: '',
+        iframeSrc: ''
+      };
+
       switchTab(tabId, iframeId);
     }
 
     function switchTab(tabId, iframeId) {
+      // Save current tab data
+      const activeTab = document.querySelector('.tab.active');
+      if (activeTab) {
+        const activeTabId = activeTab.id;
+        const activeIframe = document.querySelector('.search-results:not([style*="display: none"])');
+        tabData[activeTabId].searchQuery = document.getElementById('searchInput').value;
+        tabData[activeTabId].iframeSrc = activeIframe.src;
+      }
+
+      // Reset search bar and iframe for new tab
       document.querySelectorAll('.tab').forEach(tab => {
         tab.classList.remove('active');
       });
@@ -117,8 +134,10 @@
       });
 
       document.getElementById(tabId).classList.add('active');
-      document.getElementById('searchResults').style.display = 'none';
       document.getElementById(iframeId).style.display = 'block';
+      document.getElementById('searchInput').value = tabData[tabId].searchQuery;
+      document.getElementById('searchResults').style.display = 'none';
+      document.getElementById(iframeId).src = tabData[tabId].iframeSrc;
     }
 
     function searchKeyPress(event) {
@@ -127,6 +146,8 @@
         let encodedQuery = encodeURIComponent(searchQuery);
         let activeIframe = document.querySelector('.search-results:not([style*="display: none"])');
         activeIframe.src = 'https://www.bing.com/search?q=' + encodedQuery;
+        tabData[document.querySelector('.tab.active').id].searchQuery = searchQuery;
+        tabData[document.querySelector('.tab.active').id].iframeSrc = activeIframe.src;
       }
     }
 
