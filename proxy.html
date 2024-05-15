@@ -28,9 +28,27 @@
       font-size: 24px;
     }
 
+    .tabs {
+      display: flex;
+      overflow-x: auto;
+      background-color: #ff0000; /* Red background for tabs */
+    }
+
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      background-color: #ff7f7f; /* Lighter red for individual tabs */
+      border: 1px solid #e1e1e1;
+      margin-right: 2px;
+    }
+
+    .tab.active {
+      background-color: #ff4f4f; /* Darker red for active tab */
+    }
+
     .new-tab {
-      background-color: #FF7F50; /* Red background for new tab */
-      height: 100vh;
+      background-color: #ff0000; /* Red background for new tab */
+      height: calc(100vh - 56px - 40px); /* Adjust height to account for top bar and tabs */
     }
 
     .search-bar {
@@ -58,23 +76,79 @@
       +
     </div>
   </div>
-  <div class="new-tab">
+  <div class="tabs" id="tabs"></div>
+  <div class="new-tab" id="newTabContent">
     <input type="text" id="searchInput" class="search-bar" placeholder="Search..." onkeydown="searchKeyPress(event)">
     <iframe src="" id="searchResults" class="search-results"></iframe>
   </div>
 
   <script>
+    let tabCount = 0;
+    const tabsContainer = document.getElementById('tabs');
+
     function openNewTab() {
-      window.open('proxy.html', '_blank');
+      tabCount++;
+      const tabId = 'tab' + tabCount;
+      const iframeId = 'iframe' + tabCount;
+      const tabButton = document.createElement('div');
+      tabButton.className = 'tab';
+      tabButton.id = tabId;
+      tabButton.textContent = 'Tab ' + tabCount;
+      tabButton.onclick = function() {
+        switchTab(tabId, iframeId);
+      };
+      tabsContainer.appendChild(tabButton);
+
+      const iframe = document.createElement('iframe');
+      iframe.id = iframeId;
+      iframe.className = 'search-results';
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+
+      switchTab(tabId, iframeId);
+    }
+
+    function switchTab(tabId, iframeId) {
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      document.querySelectorAll('.search-results').forEach(iframe => {
+        iframe.style.display = 'none';
+      });
+
+      document.getElementById(tabId).classList.add('active');
+      document.getElementById('searchResults').style.display = 'none';
+      document.getElementById(iframeId).style.display = 'block';
     }
 
     function searchKeyPress(event) {
       if (event.keyCode === 13) { // Enter key pressed
         let searchQuery = document.getElementById('searchInput').value;
         let encodedQuery = encodeURIComponent(searchQuery);
-        document.getElementById('searchResults').src = 'https://www.bing.com/search?q=' + encodedQuery;
+        let activeIframe = document.querySelector('.search-results:not([style*="display: none"])');
+        activeIframe.src = 'https://www.bing.com/search?q=' + encodedQuery;
+
+        // Listen for load event to modify links
+        activeIframe.onload = function() {
+          modifyLinks(activeIframe);
+        };
       }
     }
+
+    function modifyLinks(iframe) {
+      const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+      const links = iframeDocument.querySelectorAll('a');
+      links.forEach(link => {
+        link.addEventListener('click', function(event) {
+          event.preventDefault();
+          const newTab = window.open('about:blank', '_blank');
+          newTab.location.href = link.href;
+        });
+      });
+    }
+
+    // Open the first tab on load
+    openNewTab();
   </script>
 </body>
 </html>
