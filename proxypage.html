@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proxy Page</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .top-bar {
+      background-color: #ffffff;
+      height: 56px;
+      border-bottom: 1px solid #e1e1e1;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 0 16px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .reload-button {
+      cursor: pointer;
+      font-size: 16px;
+      padding: 10px 20px;
+      background-color: #ff0000; /* Red background */
+      color: #ffffff;
+      border: none;
+      border-radius: 5px;
+      margin-right: 16px;
+    }
+
+    .proxy-content {
+      height: calc(100vh - 56px);
+      width: 100%;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="top-bar">
+    <button class="reload-button" onclick="reloadPage()">Reload</button>
+  </div>
+  <iframe id="proxyIframe" class="proxy-content"></iframe>
+
+  <script>
+    function getQueryParam(param) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(param);
+    }
+
+    function reloadPage() {
+      const iframe = document.getElementById('proxyIframe');
+      iframe.src = iframe.src;
+    }
+
+    window.onload = function() {
+      const url = getQueryParam('url');
+      if (url) {
+        document.getElementById('proxyIframe').src = url;
+      }
+    }
+  </script>
+</body>
+</html>
