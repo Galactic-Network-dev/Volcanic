@@ -127,24 +127,7 @@
         let encodedQuery = encodeURIComponent(searchQuery);
         let activeIframe = document.querySelector('.search-results:not([style*="display: none"])');
         activeIframe.src = 'https://www.bing.com/search?q=' + encodedQuery;
-
-        // Listen for load event to modify links
-        activeIframe.onload = function() {
-          modifyLinks(activeIframe);
-        };
       }
-    }
-
-    function modifyLinks(iframe) {
-      const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
-      const links = iframeDocument.querySelectorAll('a');
-      links.forEach(link => {
-        link.addEventListener('click', function(event) {
-          event.preventDefault();
-          const newTab = window.open('about:blank', '_blank');
-          newTab.location.href = link.href;
-        });
-      });
     }
 
     // Open the first tab on load
